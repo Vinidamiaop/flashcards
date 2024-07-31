@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "flashcards.api", "flashcards.api\flashcards.api.csproj", "{3BD20D3C-6E3B-4BF0-89B9-8380C42C58B8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "flashcards.domain", "flashcards.domain\flashcards.domain.csproj", "{6AD8C9C8-2C62-4B19-A1A0-6A30B639CA87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "flashcards.infra", "flashcards.infra\flashcards.infra.csproj", "{79070283-3A78-4D54-9931-79C0307FB9F4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3BD20D3C-6E3B-4BF0-89B9-8380C42C58B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BD20D3C-6E3B-4BF0-89B9-8380C42C58B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BD20D3C-6E3B-4BF0-89B9-8380C42C58B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BD20D3C-6E3B-4BF0-89B9-8380C42C58B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6AD8C9C8-2C62-4B19-A1A0-6A30B639CA87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AD8C9C8-2C62-4B19-A1A0-6A30B639CA87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AD8C9C8-2C62-4B19-A1A0-6A30B639CA87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AD8C9C8-2C62-4B19-A1A0-6A30B639CA87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79070283-3A78-4D54-9931-79C0307FB9F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79070283-3A78-4D54-9931-79C0307FB9F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79070283-3A78-4D54-9931-79C0307FB9F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79070283-3A78-4D54-9931-79C0307FB9F4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
