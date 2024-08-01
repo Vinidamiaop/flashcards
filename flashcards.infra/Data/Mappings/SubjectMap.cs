@@ -18,7 +18,8 @@ namespace flashcards.infra.Data.Mappings
             builder.Property(x => x.Title)                
                 .IsRequired(true)                         
                 .HasColumnName("Title")
-                .HasColumnType("TEXT");
+                .HasColumnType("NVARCHAR")
+                .HasMaxLength(500);
 
             builder.HasIndex(x => x.Title, "IX_Subject_Title").IsUnique();
 

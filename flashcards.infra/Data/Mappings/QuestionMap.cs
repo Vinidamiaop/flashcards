@@ -19,7 +19,8 @@ namespace flashcards.infra.Data.Mappings
             builder.Property(x => x.Text)
                 .IsRequired(true)
                 .HasColumnName("Text")
-                .HasColumnType("Text");
+                .HasColumnType("NVARCHAR")
+                .HasMaxLength(500);
 
             builder.Property(x => x.SubjectId)
                 .IsRequired(true);
