@@ -5,5 +5,9 @@ namespace flashcards.domain.Entities
         public string Title { get; set; } = string.Empty;
         public string? Description { get; set; } = string.Empty;
         public List<Question> Questions { get; set; } = [];
+
+        public Subject() {
+
+        }
     }
 }

@@ -5,6 +5,8 @@ namespace flashcards.domain.Entities
         public string Text { get; set; } = string.Empty;
         public bool IsCorrect { get; set; }
         public Question Question = null!;
-        public int QuestionId { get; set; }
+        public long QuestionId { get; set; }
+
+        public Answer(){}
     }
 }
