@@ -5,12 +5,23 @@ namespace flashcards.domain.Requests.QuestionRequest
 {
     public class CreateQuestionRequest : Request
     {
-        [Required(ErrorMessage = "Text is required")]
         public string Text { get; set; } = string.Empty;
 
         public List<Answer> Answers = [];
 
-        [Required(ErrorMessage = "Subject is required")]
-        public Subject Subject { get; set; } = null!;
+        public long SubjectId { get; set; }
+
+        public override bool IsValid()
+        {
+            if(String.IsNullOrWhiteSpace(Text)) {
+                Errors.Add("Text is required");
+            }
+
+            if(SubjectId <= 0) {
+                Errors.Add("Invalid SubjectId");
+            }
+
+            return Errors.Count <= 0;
+        }
     }
 }

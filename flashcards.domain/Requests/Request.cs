@@ -1,12 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace flashcards.domain.Requests
 {
-    public class Request
+    public abstract class Request
     {
-        
+        protected readonly ICollection<string> Errors = [];
+        public abstract bool IsValid();
+
+        public ICollection<string> GetErrors()
+        {
+            return [.. Errors];
+        }
     }
 }

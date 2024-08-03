@@ -4,21 +4,23 @@ namespace flashcards.domain.Responses
 {
     public class Response<TData>
     {
-        private readonly int _code;
+        public readonly int Code;
         public TData? Data {get; set;}
         public string? Message {get; set;}
+        public ICollection<string>? Errors {get; set;}
 
         [JsonConstructor]
-        public Response() => _code = Configuration.DefaultStatusCode;
+        public Response() => Code = Configuration.DefaultStatusCode;
 
-        public Response(TData? data, int code = Configuration.DefaultStatusCode, string? message = null)
+        public Response(TData? data, int code = Configuration.DefaultStatusCode, string? message = null, ICollection<string>? errors = null)
         {
             Data = data;
             Message = message;
-            _code = code;
+            Code = code;
+            Errors = errors; 
         }
 
         [JsonIgnore]
-        public bool IsSuccess => _code is >= 200 and <= 299;
+        public bool IsSuccess => Code is >= 200 and <= 299;
     }
 }

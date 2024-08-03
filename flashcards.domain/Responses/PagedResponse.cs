@@ -26,8 +26,9 @@ namespace flashcards.domain.Responses
         public PagedResponse(
             TData? data,
             int code = Configuration.DefaultStatusCode,
-            string? message = null)
-            : base(data, code, message)
+            string? message = null,
+            ICollection<string>? Errors = null)
+            : base(data, code, message, Errors)
         {
 
         }
