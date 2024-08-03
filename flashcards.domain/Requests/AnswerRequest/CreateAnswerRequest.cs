@@ -3,13 +3,26 @@ using flashcards.domain.Entities;
 
 namespace flashcards.domain.Requests.AnswerRequest
 {
-    public class CreateAnswerRequest : Request
+    public class CreateAnswerRequest(string text, long questionId, bool isCorrect = false) : Request
     {
-        [Required(ErrorMessage = "Text is required")]
-        public string Text { get; set; } = string.Empty;
-        public bool IsCorrect { get; set; } = false;
+        public string Text { get; set; } = text;
+        public bool IsCorrect { get; set; } = isCorrect;
 
-        [Required(ErrorMessage = "Question is required")]
-        public Question Question = null!;
+        public long QuestionId { get; set; } = questionId;
+
+        public override bool IsValid()
+        {
+            if (String.IsNullOrWhiteSpace(Text))
+            {
+                Errors.Add("Text is required");
+            }
+
+            if (QuestionId <= 0)
+            {
+                Errors.Add("Invalid questionId");
+            }
+
+            return Errors.Count <= 0;
+        }
     }
 }

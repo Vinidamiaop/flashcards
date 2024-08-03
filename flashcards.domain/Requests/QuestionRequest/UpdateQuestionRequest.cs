@@ -5,15 +5,17 @@ namespace flashcards.domain.Requests.QuestionRequest
 {
     public class UpdateQuestionRequest : Request
     {
-        [Required(ErrorMessage = "Invalid Id")]
         public long Id { get; set; }
-
-        [Required(ErrorMessage = "Text is required")]
         public string Text { get; set; } = string.Empty;
 
-        public List<Answer> Answers = [];
+        public override bool IsValid()
+        {
+            if(Id <= 0) {
+                Errors.Add("Invalid Id");
+            }
 
-        [Required(ErrorMessage = "Subject is required")]
-        public Subject Subject { get; set; } = null!;
+
+            return Errors.Count <= 0;
+        }
     }
 }

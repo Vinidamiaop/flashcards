@@ -2,7 +2,7 @@ using flashcards.domain.Entities;
 using flashcards.domain.Requests.SubjectRequest;
 using flashcards.domain.Responses;
 
-namespace flashcards.domain.Interfaces
+namespace flashcards.domain.Repositories
 {
     public interface ISubjectRepository
     {
@@ -10,6 +10,6 @@ namespace flashcards.domain.Interfaces
         Task<Response<Subject?>> UpdateAsync(UpdateSubjectRequest request);
         Task<Response<Subject?>> DeleteAsync(DeleteSubjectRequest request);
         Task<Response<Subject?>> GetByIdAsync(GetSubjectByIdRequest request);
-        Task<PagedResponse<Subject?>> GetAllAsync(GetPagedSubjectRequest request);
+        Task<PagedResponse<List<Subject>>> GetAllAsync(GetPagedSubjectRequest request);
     }
 }
