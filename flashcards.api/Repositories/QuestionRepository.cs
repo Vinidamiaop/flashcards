@@ -144,41 +144,16 @@ namespace flashcards.api.Repositories
                     .OrderBy(x => Guid.NewGuid());
 
                 var totalCount = await query.CountAsync();
-                var anonymousQuestions = await query
+                var questions = await query
                     .Skip((request.GetPageNumber() - 1) * request.GetPageSize())
                     .Take(request.GetPageSize())
-                    .Select(q => new
-                    {
-                        q.Id,
-                        q.Text,
-                        q.SubjectId,
-                        q.Subject,
-                        Answers = q.Answers.Select(a => new
-                        {
-                            a.Id,
-                            a.Text,
-                            a.QuestionId,
-                            a.IsChecked
-                        }).ToList()
-                    })
+                    .Include(x => x.Answers)
                     .ToListAsync();
 
-                var questions = anonymousQuestions.Select(q => new QuestionValueObject
-                {
-                    Id = q.Id,
-                    Text = q.Text,
-                    SubjectId = q.SubjectId,
-                    Subject = q.Subject,
-                    Answers = q.Answers.Select(a => new AnswerValueObject
-                    {
-                        Id = a.Id,
-                        Text = a.Text,
-                        QuestionId = a.QuestionId,
-                        IsChecked = a.IsChecked
-                    }).ToList()
-                }).ToList();
+                List<QuestionValueObject> listQuestions = [];   
+                listQuestions.AddRange(questions.Select(question => (QuestionValueObject) question));             
 
-                return new PagedResponse<List<QuestionValueObject>>(questions, totalCount, request.GetPageNumber(), request.GetPageSize());
+                return new PagedResponse<List<QuestionValueObject>>(listQuestions, totalCount, request.GetPageNumber(), request.GetPageSize());
             }
             catch
             {
