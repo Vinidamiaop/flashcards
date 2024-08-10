@@ -7,6 +7,7 @@ namespace flashcards.domain.Repositories
     public interface IAnswerRepository
     {
         Task<Response<Answer?>> CreateAsync(CreateAnswerRequest request);
+        Task<Response<List<Answer>?>> CreateAsync(CreateManyAnswersRequest request);
         Task<Response<Answer?>> UpdateAsync(UpdateAnswerRequest request);
         Task<Response<Answer?>> DeleteAsync(DeleteAnswerRequest request);
         Task<Response<Answer?>> GetByIdAsync(GetAnswerByIdRequest request);

@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace flashcards.infra.Migrations
 {
     /// <inheritdoc />
-    public partial class FlashcardsV1 : Migration
+    public partial class v1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,9 +16,10 @@ namespace flashcards.infra.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "NVARCHAR(500)", maxLength: 500, nullable: false),
-                    Description = table.Column<string>(type: "NVARCHAR(255)", maxLength: 255, nullable: true)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Title = table.Column<string>(type: "VARCHAR", maxLength: 80, nullable: false),
+                    Description = table.Column<string>(type: "VARCHAR", maxLength: 255, nullable: true),
+                    Slug = table.Column<string>(type: "VARCHAR", maxLength: 80, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -29,8 +31,8 @@ namespace flashcards.infra.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Text = table.Column<string>(type: "NVARCHAR(500)", maxLength: 500, nullable: false),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Text = table.Column<string>(type: "VARCHAR", maxLength: 500, nullable: false),
                     SubjectId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
@@ -49,9 +51,9 @@ namespace flashcards.infra.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Text = table.Column<string>(type: "NVARCHAR(500)", maxLength: 500, nullable: false),
-                    IsCorrect = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Text = table.Column<string>(type: "VARCHAR", maxLength: 500, nullable: false),
+                    IsCorrect = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     QuestionId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>

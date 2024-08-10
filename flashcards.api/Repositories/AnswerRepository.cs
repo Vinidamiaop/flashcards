@@ -43,6 +43,34 @@ namespace flashcards.api.Repositories
             }
         }
 
+        public async Task<Response<List<Answer>?>> CreateAsync(CreateManyAnswersRequest request)
+        {
+            try
+            {
+                var questions = await _dbContext.Questions
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(x => x.Id == request.QuestionId);
+
+                if (questions == null)
+                    return new Response<List<Answer>?>(null, 400, null, ["Question doesn't exists"]);
+                
+                var answersToAdd = new List<Answer>();
+                foreach(var answer in request.Answers ?? Enumerable.Empty<Answer>()) {
+                    answer.QuestionId = questions.Id;
+                    answersToAdd.Add(answer);
+                }
+
+                await _dbContext.Answers.AddRangeAsync(answersToAdd);
+                await _dbContext.SaveChangesAsync();
+
+                return new Response<List<Answer>?>(answersToAdd, 201, "Answer created");
+            }
+            catch
+            {
+                return new Response<List<Answer>?>(null, 500, null, ["Something went wrong"]);
+            }
+        }
+
         public async Task<Response<Answer?>> DeleteAsync(DeleteAnswerRequest request)
         {
             try
