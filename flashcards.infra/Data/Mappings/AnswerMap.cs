@@ -9,6 +9,7 @@ namespace flashcards.infra.Data.Mappings
         public void Configure(EntityTypeBuilder<Answer> builder)
         {
             builder.ToTable("Answer");
+            builder.Ignore(x => x.IsChecked);
             builder.HasKey(x => x.Id);
 
             builder.Property(x => x.Id)
@@ -18,7 +19,7 @@ namespace flashcards.infra.Data.Mappings
             builder.Property(x => x.Text)
                 .IsRequired(true)
                 .HasColumnName("Text")
-                .HasColumnType("NVARCHAR")
+                .HasColumnType("VARCHAR")
                 .HasMaxLength(500);
             
             builder.Property(x => x.IsCorrect)

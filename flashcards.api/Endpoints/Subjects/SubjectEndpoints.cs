@@ -41,6 +41,15 @@ namespace flashcards.api.Endpoints.Subjects
                 .Produces<Response<Subject?>>(StatusCodes.Status400BadRequest)
                 .Produces<Response<Subject?>>(StatusCodes.Status500InternalServerError);
             
+            // app.MapPost("/", HandleCreateSubjectWithQuestionAsync)
+            //     .WithName("Create Subject with questions")
+            //     .WithDescription("Creates a new subject with questions")
+            //     .WithSummary("Creates a new subject with questions")
+            //     .WithOrder(3)
+            //     .Produces<Response<Subject?>>(StatusCodes.Status201Created)
+            //     .Produces<Response<Subject?>>(StatusCodes.Status400BadRequest)
+            //     .Produces<Response<Subject?>>(StatusCodes.Status500InternalServerError);
+            
             app.MapPut("/", HandleUpdateSubjectAsync)
                 .WithName("Update Subject")
                 .WithDescription("Updates subject")
@@ -80,14 +89,14 @@ namespace flashcards.api.Endpoints.Subjects
 
         private static async Task<IResult> HandleCreateSubjectAsync(
             ISubjectRepository repository,
-            CreateSubjectRequest request
+            CreateSubjectWithQuestionRequest request
         )
         {
             if(! request.IsValid()) {
                 return TypedResults.Json<Response<Subject?>>(new Response<Subject?>(null, 400, null, request.GetErrors()), statusCode: StatusCodes.Status400BadRequest);
             }
 
-            var result = await repository.CreateAsync(request);
+            var result = await repository.CreateWithQuestionsAsync(request);
             return result.IsSuccess
                 ? TypedResults.Created($"/{result.Data?.Id}", result)
                 : TypedResults.Json<Response<Subject?>>(result, statusCode: result.Code);

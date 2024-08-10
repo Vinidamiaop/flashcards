@@ -1,5 +1,7 @@
 using flashcards.domain.Entities;
 using flashcards.domain.Repositories;
+using flashcards.domain.Requests.AnswerRequest;
+using flashcards.domain.Requests.QuestionRequest;
 using flashcards.domain.Requests.SubjectRequest;
 using flashcards.domain.Responses;
 using flashcards.infra.Data;
@@ -10,9 +12,13 @@ namespace flashcards.api.Repositories
     public class SubjectRepository : ISubjectRepository
     {
         private readonly AppDbContext _dbContext;
-        public SubjectRepository(AppDbContext dbContext)
+        private readonly IQuestionRepository _questionRepository;
+        private readonly IAnswerRepository _answerRepository;
+        public SubjectRepository(AppDbContext dbContext, IQuestionRepository questionRepository, IAnswerRepository answerRepository)
         {
             _dbContext = dbContext;
+            _questionRepository = questionRepository;
+            _answerRepository = answerRepository;
         }
         public async Task<Response<Subject?>> CreateAsync(CreateSubjectRequest request)
         {
@@ -38,6 +44,49 @@ namespace flashcards.api.Repositories
                 return new Response<Subject?>(null, 500, null, ["Something went wrong"]);
             }
         }
+
+        public async Task<Response<Subject?>> CreateWithQuestionsAsync(CreateSubjectWithQuestionRequest request)
+        {
+            if (request == null)
+                return new Response<Subject?>(null, 400, null, ["Invalid request"]);
+
+
+            if (!await SubjectTitleIsUnique(request.Title))
+                return new Response<Subject?>(null, 400, null, ["Title must be unique"]);
+
+            var newSubject = new Subject(request.Title, request.Questions, request.Description);
+
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            try
+            {
+                await _dbContext.Subjects.AddAsync(newSubject);
+                await _dbContext.SaveChangesAsync();
+
+                if (request.Questions.Count > 0)
+                {
+                    var questionsRequest = new CreateManyQuestionsRequest(newSubject.Id, request.Questions);
+                    var questions = await _questionRepository.CreateAsync(questionsRequest);
+
+                    foreach (var question in questions.Data ?? [])
+                    {
+                        var answerRequest = new CreateManyAnswersRequest(question.Id, question.Answers);
+                        await _answerRepository.CreateAsync(answerRequest);
+                    }
+                }
+
+
+                await transaction.CommitAsync();
+
+                return new Response<Subject?>(newSubject, 201, "Subject created successfully");
+            }
+            catch (Exception)
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+
+        }
+
 
         public async Task<Response<Subject?>> DeleteAsync(DeleteSubjectRequest request)
         {

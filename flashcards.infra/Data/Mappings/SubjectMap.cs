@@ -18,16 +18,23 @@ namespace flashcards.infra.Data.Mappings
             builder.Property(x => x.Title)                
                 .IsRequired(true)                         
                 .HasColumnName("Title")
-                .HasColumnType("NVARCHAR")
-                .HasMaxLength(500);
+                .HasColumnType("VARCHAR")
+                .HasMaxLength(80);
 
             builder.HasIndex(x => x.Title, "IX_Subject_Title").IsUnique();
 
             builder.Property(x => x.Description)                
             .IsRequired(false)                         
             .HasColumnName("Description")
-            .HasColumnType("NVARCHAR")
+            .HasColumnType("VARCHAR")
             .HasMaxLength(255);
+
+
+            builder.Property(x => x.Slug)
+                .IsRequired(true)
+                .HasColumnName("Slug")
+                .HasColumnType("VARCHAR")
+                .HasMaxLength(80);
 
 
             builder.HasMany<Question>(x => x.Questions)
