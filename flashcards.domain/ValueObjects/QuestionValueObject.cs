@@ -9,14 +9,17 @@ namespace flashcards.domain.ValueObjects
         public long SubjectId { get; set; }
         public Subject Subject { get; set; } = null!;
         public List<AnswerValueObject> Answers { get; set; } = [];
+        public int CorrectAnswersCount {get; set;}
 
-        public QuestionValueObject(long id, string text, long subjectId, Subject subject, List<AnswerValueObject> answers)
+        public QuestionValueObject(long id, string text, long subjectId, Subject subject, List<AnswerValueObject> answers, int correctAnswersCount)
         {
             Id = id;
             Text = text;
             SubjectId = subjectId;
             Subject = subject;
             Answers = answers;
+            CorrectAnswersCount = correctAnswersCount;
+
         }
 
         public static implicit operator QuestionValueObject(Question question)
@@ -25,8 +28,8 @@ namespace flashcards.domain.ValueObjects
             foreach(var answer in question.Answers) {
                 answers.Add(answer);
             }
-            
-            return new QuestionValueObject(question.Id, question.Text, question.SubjectId, question.Subject, answers);
+
+            return new QuestionValueObject(question.Id, question.Text, question.SubjectId, question.Subject, answers, question.GetIsCorrectCount());
         }
     }
 }

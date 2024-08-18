@@ -92,6 +92,25 @@ namespace flashcards.api.Repositories
             }
         }
 
+        public async Task<Response<List<Question>?>> DeleteAsync(DeleteQuestionsRequest request)
+        {
+            try
+            {
+                var questionIds = request.Questions.Select(x => x.Id).ToList();
+                var questions = await _dbContext.Questions
+                    .Where(x => questionIds.Contains(x.Id))
+                    .ToListAsync();
+
+                _dbContext.Questions.RemoveRange(questions);
+                await _dbContext.SaveChangesAsync();
+                return new Response<List<Question>?>(questions, 200, null, ["Questions deleted"]);
+            }
+            catch
+            {
+                return new Response<List<Question>?>(null, 500, null, ["Something went wrong, try again later."]);
+            }
+        }
+
         public async Task<PagedResponse<List<Question>>> GetAllAsync(GetPagedQuestionRequest request)
         {
             try
@@ -134,7 +153,7 @@ namespace flashcards.api.Repositories
             }
         }
 
-        public async Task<PagedResponse<List<QuestionValueObject>>> GetBySubjectIdAsync(GetQuestionsBySubjectIdRequest request)
+        public async Task<PagedResponse<List<QuestionValueObject>>> GetBySubjectSlugAsync(GetQuestionsBySubjectSlugRequest request)
         {
             try
             {
@@ -157,7 +176,32 @@ namespace flashcards.api.Repositories
             }
             catch
             {
-                return new PagedResponse<List<QuestionValueObject>>(null, 500, null, ["Error finding subjects"]);
+                return new PagedResponse<List<QuestionValueObject>>(null, 500, null, ["Something went wrong, try again later."]);
+            }
+        }
+
+        public async Task<PagedResponse<List<Question>>> GetBySubjectSlugCompleteAsync(GetQuestionsBySubjectSlugRequest request)
+        {
+            try
+            {
+                var query = _dbContext.Questions
+                    .AsNoTracking()
+                    .Where(x => x.Subject.Slug == request.SubjectSlug)
+                    .OrderBy(x => Guid.NewGuid());
+
+                var totalCount = await query.CountAsync();
+                var questions = await query
+                    .Skip((request.GetPageNumber() - 1) * request.GetPageSize())
+                    .Take(request.GetPageSize())
+                    .Include(x => x.Answers)
+                    .ToListAsync();
+         
+
+                return new PagedResponse<List<Question>>(questions, totalCount, request.GetPageNumber(), request.GetPageSize());
+            }
+            catch
+            {
+                return new PagedResponse<List<Question>>(null, 500, null, ["Something went wrong, try again later."]);
             }
         }
 
@@ -230,5 +274,6 @@ namespace flashcards.api.Repositories
                 return new Response<Question?>(null, 500, null, ["Something went wrong"]);
             }
         }
+        
     }
 }

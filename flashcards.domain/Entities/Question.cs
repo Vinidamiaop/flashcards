@@ -6,7 +6,6 @@ namespace flashcards.domain.Entities
         public List<Answer> Answers { get; set; } = [];
         public long SubjectId { get; set; }
         public Subject Subject { get; set; } = null!;
-
         public Question() { }
         public Question(string text, long subjectId, List<Answer> answers)
         {
@@ -22,6 +21,11 @@ namespace flashcards.domain.Entities
             if (Answers.Any(x => x.IsChecked && !x.IsCorrect)) return false;
 
             return true;
+        }
+
+        public int GetIsCorrectCount() 
+        {
+            return Answers.Count(x => x.IsCorrect);
         }
     }
 }

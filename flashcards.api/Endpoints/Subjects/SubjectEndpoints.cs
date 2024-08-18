@@ -1,4 +1,3 @@
-using System.Net.Mime;
 using flashcards.api.Interfaces.Endpoints;
 using flashcards.domain;
 using flashcards.domain.Entities;
@@ -139,7 +138,7 @@ namespace flashcards.api.Endpoints.Subjects
 
         private static async Task<IResult> HandleUpdateSubjectAsync(
             ISubjectRepository repository,
-            UpdateSubjectRequest request
+            UpdateSubjectWithQuestionRequest request
         )
         {
             if(! request.IsValid()) {

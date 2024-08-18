@@ -12,8 +12,10 @@ namespace flashcards.domain.Repositories
         Task<Response<CorrectedQuestion>> QuestionCorrectionAsync(QuestionCorrectionRequest request);
         Task<Response<Question?>> UpdateAsync(UpdateQuestionRequest request);
         Task<Response<Question?>> DeleteAsync(DeleteQuestionRequest request);
+        Task<Response<List<Question>?>> DeleteAsync(DeleteQuestionsRequest request);
         Task<Response<Question?>> GetByIdAsync(GetQuestionByIdRequest request);
         Task<PagedResponse<List<Question>>> GetAllAsync(GetPagedQuestionRequest request);
-        Task<PagedResponse<List<QuestionValueObject>>> GetBySubjectIdAsync(GetQuestionsBySubjectIdRequest request);
+        Task<PagedResponse<List<QuestionValueObject>>> GetBySubjectSlugAsync(GetQuestionsBySubjectSlugRequest request);
+        Task<PagedResponse<List<Question>>> GetBySubjectSlugCompleteAsync(GetQuestionsBySubjectSlugRequest request);
     }
 }

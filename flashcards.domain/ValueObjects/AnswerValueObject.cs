@@ -8,6 +8,7 @@ namespace flashcards.domain.ValueObjects
         public string Text { get; set; } = string.Empty;
         public long QuestionId { get; set; }
         public bool IsChecked { get; set; } = false;
+        public bool IsCorrect {get;} = false;
 
         public AnswerValueObject(long id, string text, long questionId, bool isChecked) {
             Id = id;

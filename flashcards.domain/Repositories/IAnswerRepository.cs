@@ -10,6 +10,7 @@ namespace flashcards.domain.Repositories
         Task<Response<List<Answer>?>> CreateAsync(CreateManyAnswersRequest request);
         Task<Response<Answer?>> UpdateAsync(UpdateAnswerRequest request);
         Task<Response<Answer?>> DeleteAsync(DeleteAnswerRequest request);
+        Task<Response<List<Answer>?>> DeleteAsync(DeleteAnswersRequest request);
         Task<Response<Answer?>> GetByIdAsync(GetAnswerByIdRequest request);
         Task<PagedResponse<List<Answer>>> GetAllAsync(GetPagedAnswerRequest request);
     }

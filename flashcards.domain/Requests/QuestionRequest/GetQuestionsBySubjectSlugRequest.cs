@@ -1,6 +1,6 @@
 namespace flashcards.domain.Requests.QuestionRequest
 {
-    public class GetQuestionsBySubjectIdRequest(string subjectSlug, int pageNumber, int pageSize) : PagedRequest(pageNumber, pageSize)
+    public class GetQuestionsBySubjectSlugRequest(string subjectSlug, int pageNumber, int pageSize) : PagedRequest(pageNumber, pageSize)
     {
         public string SubjectSlug { get; set; } = subjectSlug;
 

@@ -47,42 +47,24 @@ namespace flashcards.api.Repositories
 
         public async Task<Response<Subject?>> CreateWithQuestionsAsync(CreateSubjectWithQuestionRequest request)
         {
-            if (request == null)
-                return new Response<Subject?>(null, 400, null, ["Invalid request"]);
-
-
-            if (!await SubjectTitleIsUnique(request.Title))
-                return new Response<Subject?>(null, 400, null, ["Title must be unique"]);
-
-            var newSubject = new Subject(request.Title, request.Questions, request.Description);
-
-            using var transaction = await _dbContext.Database.BeginTransactionAsync();
             try
             {
+                if (request == null)
+                    return new Response<Subject?>(null, 400, null, ["Invalid request"]);
+
+                if (!await SubjectTitleIsUnique(request.Title))
+                    return new Response<Subject?>(null, 400, null, ["Title must be unique"]);
+
+                request.Questions.ForEach(x => { x.Id = 0; x.Answers.ForEach(a => a.Id = 0); });
+                var newSubject = new Subject(request.Title, request.Questions, request.Description);
                 await _dbContext.Subjects.AddAsync(newSubject);
                 await _dbContext.SaveChangesAsync();
-
-                if (request.Questions.Count > 0)
-                {
-                    var questionsRequest = new CreateManyQuestionsRequest(newSubject.Id, request.Questions);
-                    var questions = await _questionRepository.CreateAsync(questionsRequest);
-
-                    foreach (var question in questions.Data ?? [])
-                    {
-                        var answerRequest = new CreateManyAnswersRequest(question.Id, question.Answers);
-                        await _answerRepository.CreateAsync(answerRequest);
-                    }
-                }
-
-
-                await transaction.CommitAsync();
 
                 return new Response<Subject?>(newSubject, 201, "Subject created successfully");
             }
             catch (Exception)
             {
-                await transaction.RollbackAsync();
-                throw;
+                return new Response<Subject?>(null, 500, null, ["Something went wrong. Try again later."]);
             }
 
         }
@@ -181,6 +163,43 @@ namespace flashcards.api.Repositories
             catch
             {
                 return new Response<Subject?>(null, 500, null, ["Something went wrong"]);
+            }
+        }
+
+        public async Task<Response<Subject?>> UpdateAsync(UpdateSubjectWithQuestionRequest request)
+        {
+            try
+            {
+                if (request == null)
+                    return new Response<Subject?>(null, 400, null, ["Invalid request"]);
+
+                if (!await SubjectTitleIsUnique(request.Title, request.SubjectId))
+                    return new Response<Subject?>(null, 400, null, ["Title must be unique"]);
+
+                var subject = _dbContext.Subjects.FirstOrDefault(x => x.Id == request.SubjectId);
+
+                if (subject == null)
+                    return new Response<Subject?>(null, 404, null, ["Subject not found"]);
+
+                subject.Title = request.Title;
+                subject.Description = request.Description;
+                subject.Questions = request.Questions;
+                subject.GenerateSlug();
+
+                if(request.DeletedQuestions.Count > 0) 
+                    await _questionRepository.DeleteAsync(new DeleteQuestionsRequest(request.DeletedQuestions));
+                
+                if(request.DeletedAnswers.Count > 0)
+                    await _answerRepository.DeleteAsync(new DeleteAnswersRequest(request.DeletedAnswers));
+
+                _dbContext.Subjects.Update(subject);
+                await _dbContext.SaveChangesAsync();
+
+                return new Response<Subject?>(subject, 201, "Subject created successfully");
+            }
+            catch (Exception)
+            {
+                return new Response<Subject?>(null, 500, null, ["Something went wrong. Try again later."]);
             }
         }
 
