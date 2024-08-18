@@ -11,7 +11,7 @@ namespace flashcards.domain.Entities
 
         public Subject()
         {
-            Slug = Slugfy.GenerateSlug(Title);
+            GenerateSlug();
         }
 
         public Subject(string title, List<Question> questions, string? description)
@@ -19,6 +19,11 @@ namespace flashcards.domain.Entities
             Title = title;
             Questions = questions;
             Description = description;
+            Slug = Slugfy.GenerateSlug(Title);
+        }
+
+        public void GenerateSlug()
+        {
             Slug = Slugfy.GenerateSlug(Title);
         }
     }

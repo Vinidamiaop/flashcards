@@ -53,9 +53,10 @@ namespace flashcards.api.Repositories
 
                 if (questions == null)
                     return new Response<List<Answer>?>(null, 400, null, ["Question doesn't exists"]);
-                
+
                 var answersToAdd = new List<Answer>();
-                foreach(var answer in request.Answers ?? Enumerable.Empty<Answer>()) {
+                foreach (var answer in request.Answers ?? Enumerable.Empty<Answer>())
+                {
                     answer.QuestionId = questions.Id;
                     answersToAdd.Add(answer);
                 }
@@ -89,6 +90,25 @@ namespace flashcards.api.Repositories
             catch
             {
                 return new Response<Answer?>(null, 500, null, ["Something went wrong"]);
+            }
+        }
+        public async Task<Response<List<Answer>?>> DeleteAsync(DeleteAnswersRequest request)
+        {
+            try
+            {
+                var answersIds = request.Answers.Select(x => x.Id).ToList();
+                var answers = await _dbContext.Answers
+                    .AsNoTracking()
+                    .Where(x => answersIds.Contains(x.Id))
+                    .ToListAsync();
+
+                _dbContext.Answers.RemoveRange(answers);
+                await _dbContext.SaveChangesAsync();
+                return new Response<List<Answer>?>(answers, 200, null, ["Answer deleted"]);
+            }
+            catch
+            {
+                return new Response<List<Answer>?>(null, 500, null, ["Something went wrongm try again later"]);
             }
         }
 

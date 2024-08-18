@@ -22,11 +22,10 @@ namespace flashcards.api.Endpoints.Questions
                 .Produces<Response<Question?>>(StatusCodes.Status400BadRequest)
                 .Produces<Response<Question?>>(StatusCodes.Status500InternalServerError);
             
-            app.MapGet("/subject/{subjectSlug}", HandleGetBySubjectIdQuestions)
+            app.MapGet("/subject/{subjectSlug}", HandleGetBySubjectSlugQuestions)
                 .WithName("Get paged questions by subject id")
                 .WithDescription("Gets paged questions by subject id")
                 .WithSummary("Gets all questions by subject id")
-                .WithOrder(2)
                 .Produces<Response<Question?>>(StatusCodes.Status200OK)
                 .Produces<Response<Question?>>(StatusCodes.Status400BadRequest)
                 .Produces<Response<Question?>>(StatusCodes.Status500InternalServerError);
@@ -35,7 +34,6 @@ namespace flashcards.api.Endpoints.Questions
                 .WithName("Get question by id")
                 .WithDescription("Gets question by id")
                 .WithSummary("Gets question by id")
-                .WithOrder(3)
                 .Produces<Response<Question?>>(StatusCodes.Status200OK)
                 .Produces<Response<Question?>>(StatusCodes.Status400BadRequest)
                 .Produces<Response<Question?>>(StatusCodes.Status404NotFound)
@@ -62,7 +60,6 @@ namespace flashcards.api.Endpoints.Questions
                 .WithName("Update Question")
                 .WithDescription("Updates question")
                 .WithSummary("Updates question")
-                .WithOrder(5)
                 .Produces<Response<Question?>>(StatusCodes.Status200OK)
                 .Produces<Response<Question?>>(StatusCodes.Status400BadRequest)
                 .Produces<Response<Question?>>(StatusCodes.Status404NotFound)
@@ -72,7 +69,6 @@ namespace flashcards.api.Endpoints.Questions
                 .WithName("Delete Question")
                 .WithDescription("Deletes a question")
                 .WithSummary("Deletes a question")
-                .WithOrder(6)
                 .Produces<Response<Question?>>(StatusCodes.Status200OK)
                 .Produces<Response<Question?>>(StatusCodes.Status400BadRequest)
                 .Produces<Response<Question?>>(StatusCodes.Status404NotFound)
@@ -95,18 +91,27 @@ namespace flashcards.api.Endpoints.Questions
                 : TypedResults.Json<Response<List<Question>>>(result, statusCode: result.Code);
         }
 
-        private static async Task<IResult> HandleGetBySubjectIdQuestions(
+        private static async Task<IResult> HandleGetBySubjectSlugQuestions(
             IQuestionRepository repository,
             [FromRoute] string subjectSlug,
             [FromQuery] int pageNumber = 1,
-            [FromQuery] int pageSize = Configuration.DefaultPageSize
+            [FromQuery] int pageSize = Configuration.DefaultPageSize,
+            [FromQuery] bool isComplete = false
         )
         {
-            var request = new GetQuestionsBySubjectIdRequest(subjectSlug,pageNumber, pageSize);
+            var request = new GetQuestionsBySubjectSlugRequest(subjectSlug,pageNumber, pageSize);
             if(! request.IsValid()) {
                 return TypedResults.Json<Response<List<QuestionValueObject>?>>(new Response<List<QuestionValueObject>?>(null, 400, null, request.GetErrors()), statusCode: StatusCodes.Status400BadRequest);
             }
-            var result = await repository.GetBySubjectIdAsync(request);
+
+            if(isComplete) {
+                var completeResult = await repository.GetBySubjectSlugCompleteAsync(request);
+                return completeResult.IsSuccess
+                    ? TypedResults.Ok(completeResult)
+                    : TypedResults.Json<Response<List<Question>>>(completeResult, statusCode: completeResult.Code);
+            }
+            
+            var result = await repository.GetBySubjectSlugAsync(request);
             return result.IsSuccess
                 ? TypedResults.Ok(result)
                 : TypedResults.Json<Response<List<QuestionValueObject>>>(result, statusCode: result.Code);

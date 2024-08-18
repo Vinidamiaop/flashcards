@@ -9,6 +9,7 @@ namespace flashcards.domain.Repositories
         Task<Response<Subject?>> CreateAsync(CreateSubjectRequest request);
         Task<Response<Subject?>> CreateWithQuestionsAsync(CreateSubjectWithQuestionRequest request);
         Task<Response<Subject?>> UpdateAsync(UpdateSubjectRequest request);
+        Task<Response<Subject?>> UpdateAsync(UpdateSubjectWithQuestionRequest request);
         Task<Response<Subject?>> DeleteAsync(DeleteSubjectRequest request);
         Task<Response<Subject?>> GetByIdAsync(GetSubjectByIdRequest request);
         Task<PagedResponse<List<Subject>>> GetAllAsync(GetPagedSubjectRequest request);

@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using flashcards.api;
 using flashcards.api.Endpoints;
 using flashcards.api.Repositories;
 using flashcards.domain.Repositories;
@@ -13,13 +14,13 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connect
 builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options => options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 builder.Services.AddCors(options => {
-    options.AddPolicy(name: "AllowLocalCors", policy => {
-        // policy.WithOrigins("http://localhost:3000")
-        //     .AllowAnyHeader()
-        //     .AllowAnyMethod();
-        policy.AllowAnyOrigin()
+    options.AddPolicy(name: ApiConfiguration.DEFAULT_CORS, policy => {
+        policy.WithOrigins(ApiConfiguration.FRONTEND_URL)
             .AllowAnyHeader()
             .AllowAnyMethod();
+        //policy.AllowAnyOrigin()
+        //    .AllowAnyHeader()
+        //    .AllowAnyMethod();
     } );
 });
 
@@ -34,7 +35,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-app.UseCors("AllowLocalCors");
+app.UseCors(ApiConfiguration.DEFAULT_CORS);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -45,16 +46,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
 app.MapEndpoints();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
